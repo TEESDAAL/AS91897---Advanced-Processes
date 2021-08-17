@@ -1,9 +1,18 @@
-<mxfile host="app.diagrams.net" modified="2021-08-17T21:27:00.686Z" agent="5.0 (Windows)" etag="Vrxcz03ruUhDgNgiSJlc" version="14.9.6" type="github">
+<mxfile host="app.diagrams.net" modified="2021-08-17T21:40:41.374Z" agent="5.0 (Windows)" etag="AgM45kIBJ_rAk0ueB2av" version="14.9.6" type="github">
   <diagram id="kgpKYQtTHZ0yAKxKKP6v" name="Page-1">
     <mxGraphModel dx="920" dy="508" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="AtGclKGKXOiEUQZHXOCT-1" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="UKHcRyofhkqPZDLnMpZ2-53" target="AtGclKGKXOiEUQZHXOCT-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="480" as="sourcePoint" />
+            <mxPoint x="310" y="580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="AtGclKGKXOiEUQZHXOCT-2" value="Player/Enemy Classes to be made" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="570" width="120" height="60" as="geometry" />
+        </mxCell>
         <mxCell id="UKHcRyofhkqPZDLnMpZ2-2" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; style=&quot;font-size: 20px&quot; face=&quot;Poppins&quot;&gt;Iterative Design Process &lt;br&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;" parent="1" vertex="1">
           <mxGeometry x="350" y="1065" width="100" height="100" as="geometry" />
         </mxCell>
@@ -163,15 +172,6 @@
         </mxCell>
         <mxCell id="UKHcRyofhkqPZDLnMpZ2-73" value="&lt;font data-font-src=&quot;https://fonts.googleapis.com/css?family=Poppins&quot; style=&quot;font-size: 20px&quot; face=&quot;Poppins&quot;&gt;Once Semi-Final Product has been completed it should go into the &lt;b&gt;Iterative Design process&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="285" y="770" width="230" height="150" as="geometry" />
-        </mxCell>
-        <mxCell id="AtGclKGKXOiEUQZHXOCT-1" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="UKHcRyofhkqPZDLnMpZ2-53" target="AtGclKGKXOiEUQZHXOCT-2">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="390" y="480" as="sourcePoint" />
-            <mxPoint x="310" y="580" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="AtGclKGKXOiEUQZHXOCT-2" value="Player/Enemy Classes to be made" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="250" y="550" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
