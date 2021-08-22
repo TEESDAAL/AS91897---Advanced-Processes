@@ -1,0 +1,155 @@
+from random import randint
+from time import sleep
+
+FISH_TILE = """\
+ _______________ 
+|               |
+|   <><   <><   |
+|     <><       |
+|  <><    <><   |
+|      <><      |
+|               |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+STORM_TILE = """\
+ _______________ 
+| (_ , /\\  ,_/  |
+|   --\\ `\\--`   |
+|      _\\ _\\    |
+|       `\\_\\    |
+|       `\\\     |
+|         \\     |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+
+BOAT_TILE = """\
+ _______________ 
+|      v  ~.    |
+|         /|    |
+|        / |    |
+| v     /__|__  |
+|     \--------/|
+|~~~`~~~~~~'~~~~|
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+BLANK_TILE = """\
+ _______________ 
+|               |
+|               |
+|               |
+|               |
+|               |
+|               |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+NUM_ROWS = 5
+
+# As the grid is square
+NUM_COLOUMNS = NUM_ROWS
+# board is a five by five grid
+board = [[' ', ' ', ' ', ' ', ' '] for row in range(NUM_ROWS)]
+number_of_fish = 10
+
+def pretty_print_board():
+    for row in board:
+        # combine each line in the ascii tiles together into tuples
+        # Then print the upacked version of each line to prettify them
+        for pretty_row in zip(*[FISH_TILE if tile == 'f' else
+                                STORM_TILE if tile == 's' else
+                                BOAT_TILE if tile == 'b' else
+                                BLANK_TILE for tile in row]):
+            print(*pretty_row)
+
+
+def add_tile(tile_type, number_to_place):
+    # Put fish tiles on the board
+    type_left_to_place = number_to_place
+
+    while type_left_to_place:
+        # Get random square
+        selected_row = randint(0, NUM_ROWS - 1)
+        selected_column = randint(0, NUM_COLOUMNS - 1)
+
+        if board[selected_row][selected_column] == ' ':
+            board[selected_row][selected_column] = tile_type
+            type_left_to_place -= 1
+
+def get_coords():
+	for row_index, row in enumerate(board):
+		for col_index, tile in enumerate(row):
+			if tile == 'b':
+				return row_index, col_index
+
+def move_boat(direction):
+    global number_of_fish
+    # Get boat index
+    row, col = get_coords()
+    # Move but up or down
+    if direction == 'w':
+        board[row][col] = ' '
+        value_of_moved_to_square = board[row - 1][col]
+        board[row - 1][col] = 'b'
+
+    elif direction == 's':
+        board[row][col] = ' '
+        try:
+            value_of_moved_to_square = board[row + 1][col]
+            # move the boat down one row
+            board[row + 1][col] = 'b'
+            # If that would push them off the board
+            # instead put the boat to the first row
+        except IndexError:
+            value_of_moved_to_square = board[0][col]
+            board[0][col] = 'b'
+
+    # Move boat side to side
+    elif direction == 'a':
+        board[row][col] = ' '
+        value_of_moved_to_square = board[row][col - 1]
+        board[row][col - 1] = 'b'
+
+    elif direction == 'd':
+        board[row][col] = ' '
+        try:
+            value_of_moved_to_square = board[row][col + 1]
+            # move the boat across one coloumn
+            board[row][col + 1] = 'b'
+            # If that would push them off the board
+            # instead put the boat to the first coloumn
+        except IndexError:
+            value_of_moved_to_square = board[row][0]
+            board[row][0] = 'b'
+    if value_of_moved_to_square == 's':
+        number_of_fish -= randint(1, 3)
+    elif value_of_moved_to_square == 'f':
+        number_of_fish += randint(1, 3)
+
+# Add fish
+add_tile('f', 5)
+
+# Add storms
+add_tile('s', 10)
+
+# Add Boat
+add_tile('b', 1)
+
+
+
+NUM_TURNS_TILL_FISH_LOSS = 2
+amount_of_moves = 0
+
+while number_of_fish > 0:
+    print(f"You have {number_of_fish} fish left.")
+
+    pretty_print_board()
+
+    move_boat(input())
+
+    # every time the player moves if it is there 2nd turn subtract a fish
+    # (uses variable to generalise to fish loss on nth turn)
+    amount_of_moves += 1
+    if not amount_of_moves % NUM_TURNS_TILL_FISH_LOSS:
+        number_of_fish -= 1
+
+
+print("You starved to death")
