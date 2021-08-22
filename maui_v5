@@ -1,0 +1,109 @@
+from random import randint
+from time import sleep
+
+FISH_TILE = """\
+|               |
+|               |
+|      ,-,      |
+|     ('_)<     |
+|      `-`      |
+|               |"""
+
+STORM_TILE = """\
+| (_ , /\\  ,_/  |
+|   --\\ `\\--`   |
+|      _\\ _\\    |
+|       `\\_\\    |
+|       `\\\     |
+|         \\     |"""
+
+
+BOAT_TILE = """\
+|      v  ~.    |
+|         /|    |
+|        / |    |
+| v     /__|__  |
+|     \--------/|
+|~~~`~~~~~~'~~~~|"""
+
+BLANK_TILE = """\
+|               |
+|               |
+|               |
+|               |
+|               |
+|               |"""
+
+NUM_ROWS = 5
+
+# As the grid is square
+NUM_COLOUMNS = NUM_ROWS
+# Map is a five by five grid
+map = [[' ', ' ', ' ', ' ', ' '] for row in range(NUM_ROWS)]
+
+def add_tile(type, number_to_place):
+    # Put fish tiles on the board
+    type_left_to_place = number_to_place
+
+    while type_left_to_place:
+        # Get random square
+        selected_row = randint(0, NUM_ROWS - 1)
+        selected_column = randint(0, NUM_COLOUMNS - 1)
+
+        if map[selected_row][selected_column] == ' ':
+            map[selected_row][selected_column] = type
+            type_left_to_place -= 1
+
+# Add fish
+add_tile('f', 5)
+
+# Add storms
+add_tile('s', 5)
+
+# Add Boat
+add_tile('b', 1)
+for row in map:
+    print(row)
+
+def get_coords():
+	for row_index, row in enumerate(map):
+		for col_index, tile in enumerate(row):
+			if tile == 'b':
+				return row_index, col_index
+
+def move_boat(direction):
+    # Get boat index
+    row, col = get_coords()
+    # Move but up or down
+    if direction == 'w':
+        map[row][col] = ' '
+        map[row - 1][col] = 'b'
+    elif direction == 's':
+        map[row][col] = ' '
+        try:
+            # move the boat down one row
+            map[row + 1][col] = 'b'
+            # If that would push them off the map
+            # instead put the boat to the first row
+        except IndexError:
+            map[0][col] = 'b'
+
+    # Move boat side to side
+    elif direction == 'a':
+        map[row][col] = ' '
+        map[row][col - 1] = 'b'
+    elif direction == 'd':
+        map[row][col] = ' '
+        try:
+            # move the boat across one coloumn
+            map[row][col + 1] = 'b'
+            # If that would push them off the map
+            # instead put the boat to the first coloumn
+        except IndexError:
+            map[row][0] = 'b'
+
+while "Game plays":
+    for row in map:
+        print(row)
+
+    move_boat(input())
