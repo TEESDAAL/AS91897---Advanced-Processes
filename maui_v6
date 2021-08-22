@@ -1,0 +1,157 @@
+from random import randint
+from time import sleep
+
+FISH_TILE = """\
+|               |
+|               |
+|      ,-,      |
+|     ('_)<     |
+|      `-`      |
+|               |"""
+
+STORM_TILE = """\
+| (_ , /\\  ,_/  |
+|   --\\ `\\--`   |
+|      _\\ _\\    |
+|       `\\_\\    |
+|       `\\\     |
+|         \\     |"""
+
+
+BOAT_TILE = """\
+|      v  ~.    |
+|         /|    |
+|        / |    |
+| v     /__|__  |
+|     \--------/|
+|~~~`~~~~~~'~~~~|"""
+
+BLANK_TILE = """\
+|               |
+|               |
+|               |
+|               |
+|               |
+|               |"""
+
+NUM_ROWS = 5
+
+# As the grid is square
+NUM_COLOUMNS = NUM_ROWS
+# Map is a five by five grid
+map = [[' ', ' ', ' ', ' ', ' '] for row in range(NUM_ROWS)]
+number_of_fish = 10
+
+
+def add_tile(type, number_to_place):
+    # Put fish tiles on the board
+    type_left_to_place = number_to_place
+
+    while type_left_to_place:
+        # Get random square
+        selected_row = randint(0, NUM_ROWS - 1)
+        selected_column = randint(0, NUM_COLOUMNS - 1)
+
+        if map[selected_row][selected_column] == ' ':
+            map[selected_row][selected_column] = type
+            type_left_to_place -= 1
+
+def get_coords():
+	for row_index, row in enumerate(map):
+		for col_index, tile in enumerate(row):
+			if tile == 'b':
+				return row_index, col_index
+
+def move_boat(direction):
+    global number_of_fish
+    # Get boat index
+    row, col = get_coords()
+    # Move but up or down
+    if direction == 'w':
+        map[row][col] = ' '
+        value_of_moved_to_square = map[row - 1][col]
+        map[row - 1][col] = 'b'
+
+    elif direction == 's':
+        map[row][col] = ' '
+        try:
+            value_of_moved_to_square = map[row + 1][col]
+            # move the boat down one row
+            map[row + 1][col] = 'b'
+            # If that would push them off the map
+            # instead put the boat to the first row
+        except IndexError:
+            value_of_moved_to_square = map[0][col]
+            map[0][col] = 'b'
+
+    # Move boat side to side
+    elif direction == 'a':
+        map[row][col] = ' '
+        value_of_moved_to_square = map[row][col - 1]
+        map[row][col - 1] = 'b'
+
+    elif direction == 'd':
+        map[row][col] = ' '
+        try:
+            value_of_moved_to_square = map[row][col + 1]
+            # move the boat across one coloumn
+            map[row][col + 1] = 'b'
+            # If that would push them off the map
+            # instead put the boat to the first coloumn
+        except IndexError:
+            value_of_moved_to_square = map[row][0]
+            map[row][0] = 'b'
+    if value_of_moved_to_square == 's':
+        number_of_fish -= randint(1, 3)
+    elif value_of_moved_to_square == 'f':
+        number_of_fish += randint(1, 3)
+
+# Add fish
+add_tile('f', 5)
+
+# Add storms
+add_tile('s', 10)
+
+# Add Boat
+add_tile('b', 1)
+
+
+
+
+
+# Way of calculating fish that makes me feel smart
+# lose_fish = False
+# while "Game plays":
+#     for row in map:
+#         print(row)
+
+#     move_boat(input())
+#     if lose_fish:
+#         number_of_fish -= 1
+#     lose_fish = not lose_fish
+
+#     if not number_of_fish:
+#         print("You Lost the game")
+#         break
+
+
+# Actual smart way to calc when to lose fish
+
+NUM_TURNS_TILL_FISH_LOSS = 2
+amount_of_moves = 0
+
+while number_of_fish > 0:
+    print(f"You have {number_of_fish} fish left.")
+    for row in map:
+        print(row)
+
+    move_boat(input())
+
+    # every time the player moves if it is there 2nd turn subtract a fish
+    # (uses variable to generalise to fish loss on nth turn)
+    amount_of_moves += 1
+    if not amount_of_moves % NUM_TURNS_TILL_FISH_LOSS:
+        number_of_fish -= 1
+
+
+print("You lost")
