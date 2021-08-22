@@ -1,0 +1,56 @@
+from random import randint
+
+FISH_TILE = """\
+|               |
+|               |
+|      ,-,      |
+|     ('_)<     |
+|      `-`      |
+|               |"""
+
+STORM_TILE = """\
+| (_ , /\\  ,_/  |
+|   --\\ `\\--`   |
+|      _\\ _\\    |
+|       `\\_\\    |
+|       `\\\     |
+|         \\     |"""
+
+
+BOAT_TILE = """\
+|      v  ~.    |
+|         /|    |
+|        / |    |
+| v     /__|__  |
+|     \--------/|
+|~~~`~~~~~~'~~~~|"""
+
+BLANK_TILE = """\
+|               |
+|               |
+|               |
+|               |
+|               |
+|               |"""
+
+NUM_ROWS = 5
+
+# As the grid is square
+NUM_COLOUMNS = NUM_ROWS
+# Map is a five by five grid
+map = [['', '', '', '', ''] for row in range(NUM_ROWS)]
+
+# Put fish tiles on the board
+fish_left_to_place = 5
+
+while fish_left_to_place:
+    # Get random square
+    selected_row = randint(0, NUM_ROWS - 1)
+    selected_column = randint(0, NUM_COLOUMNS - 1)
+
+    if map[selected_row][selected_column] == '':
+        map[selected_row][selected_column] = 'f'
+        fish_left_to_place -= 1
+
+for row in map:
+    print(row)
