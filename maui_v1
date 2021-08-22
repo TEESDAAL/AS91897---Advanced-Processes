@@ -1,0 +1,41 @@
+FISH_TILE = """\
+|               |
+|               |
+|      ,-,      |
+|     ('_)<     |
+|      `-`      |
+|               |"""
+
+STORM_TILE = """\
+| (_ , /\\  ,_/  |
+|   --\\ `\\--`   |
+|      _\\ _\\    |
+|       `\\_\\    |
+|       `\\\     |
+|         \\     |"""
+
+
+BOAT_TILE = """\
+|      v  ~.    |
+|         /|    |
+|        / |    |
+| v     /__|__  |
+|     \--------/|
+|~~~`~~~~~~'~~~~|"""
+
+BLANK_TILE = """\
+|               |
+|               |
+|               |
+|               |
+|               |
+|               |"""
+
+NUM_ROWS = 5
+
+# As the grid is square
+NUM_COLOUMNS = NUM_ROWS
+# Map is a five by five grid
+map = [['', '', '', '', ''] for row in range(NUM_ROWS)]
+
+print(map)
