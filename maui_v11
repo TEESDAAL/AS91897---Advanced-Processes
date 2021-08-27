@@ -1,0 +1,222 @@
+from random import randint
+from time import time, sleep
+import keyboard
+import os
+
+FISH_TILE = """\
+ _______________ 
+|               |
+|   <><   <><   |
+|     <><       |
+|  <><    <><   |
+|      <><      |
+|               |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+STORM_TILE = """\
+ _______________ 
+| (_ , /\\  ,_/  |
+|   --\\ `\\--`   |
+|      _\\ _\\    |
+|       `\\_\\    |
+|       `\\\     |
+|         \\     |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+
+BOAT_TILE = """\
+ _______________ 
+|      v  ~.    |
+|         /|    |
+|        / |    |
+| v     /__|__  |
+|     \--------/|
+|~~~`~~~~~~'~~~~|
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+BLANK_TILE = """\
+ _______________ 
+|  ~      ~     |
+|      ~    ~   |
+|   ~     ~     |
+|      ~     ~  |
+|   ~     ~     |
+| ~    ~     ~  |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+VALID_KEYS = ('w', 'up', 'a', 'left', 's','down' , 'd', 'right', 'e')
+
+NUM_COLUMNS = NUM_ROWS = 5
+TURNS_TILL_FISH_LOSS = 2
+number_of_fish = 0
+
+def pretty_print_board():
+    print(f"You have {number_of_fish} fish left." if number_of_fish > 0
+          else "You starved to death.")
+
+    for row in board:
+        # combine each line in the ascii tiles together into tuples
+        # Then print the upacked version of each line to prettify them
+        for pretty_row in zip(*[FISH_TILE if tile == 'f' else
+                                STORM_TILE if tile == 's' else
+                                BOAT_TILE if tile == 'b' else
+                                BLANK_TILE for tile in row]):
+            print(*pretty_row)
+
+
+def add_tile(tile_type, number_to_place):
+    # Put fish tiles on the board
+    type_left_to_place = number_to_place
+
+    while type_left_to_place:
+        # Get random square
+        selected_row = randint(0, NUM_ROWS - 1)
+        selected_column = randint(0, NUM_COLUMNS - 1)
+
+        if board[selected_row][selected_column] == ' ':
+            board[selected_row][selected_column] = tile_type
+            type_left_to_place -= 1
+
+
+def get_coords():
+    for row_index, row in enumerate(board):
+        for col_index, tile in enumerate(row):
+            if tile == 'b':
+                return row_index, col_index
+
+
+def new_board(n_fish=3, n_storms=10, boat_coords=()):
+    """Create a new random board with the boat at the boat_coords if inputed"""
+    global board
+    # Replace the board with a blank one
+    board = [[' ' for col in range(NUM_COLUMNS)] for row in range(NUM_ROWS)]
+    # If coordinates for the boat put into the function
+    # Place the boat at that location otherwise add it to a random tile
+    if boat_coords:
+        board[boat_coords[0]][boat_coords[1]] = 'b'
+    else:
+        # Add the Boat to board
+        add_tile('b', 1)
+
+    # Add fish to the board
+    add_tile('f', n_fish)
+
+    # Add storms to the board
+    add_tile('s', n_storms)
+
+
+def move(key_press):
+    """Record the users keypress."""
+    global key
+    key = str(key_press)[14:-6]
+
+
+# Print Rules
+print("""\
+            ___---*** Maui's Adventure ***---___
+
+In this game you play as Maui moving around the ocean
+trying to ward of starvation.
+
+Rules:
+    - Movement:
+        - Type one of W, A, S, or D or the arrow keys to move the boat
+        - W/↑: Move the player up one tile.
+        - A/←: Move the player one tile to the left.
+        - S/↓: Move the player down on tile.
+        - D/→: Move the player one to the right.
+
+        - E: Pressing 'E' ends the day (costing you 2 fish)
+             and refreshes the board.
+
+    You start with 10 fish, every second move you lose 1 fish,
+    if you reach 0 fish you lose/starve to death.
+
+    If you try to move off the board you will warp to the opposite
+    side of the board.
+
+    - Tiles:
+        - Boat: The "Boat Tile" reflects the position of the player.
+
+        - Fish: Moving onto a "Fish Tile" gains you 1-3 fish
+                and depletes the tile..
+
+        - Storm: Moving onto a "Storm Tile" costs you 1-3 fish and depleates the tile
+                 and replaces a random Blank Tile on the map with a "Storm Tile".
+
+        - Blank: Moving onto a "Blank Tile" has no effect.
+
+
+""")
+
+input("Press Enter to Start the game")
+
+
+# Create the board and then print it.
+new_board()
+pretty_print_board()
+
+number_of_fish = 10
+number_moves = 0
+
+
+
+last_press = time()
+keyboard.on_press(move)
+
+
+while number_of_fish > 0:
+    # Reset the key that was pressed
+    key = None
+    sleep(0.01)
+
+    if key in VALID_KEYS:
+        if key != 'e':
+            number_moves +=1
+            if not number_moves % TURNS_TILL_FISH_LOSS:
+                number_of_fish -= 1
+        # Get the position of the boat
+        row, col = get_coords()
+        # Remove the boat tile
+        board[row][col] = ' '
+        # Move but up or down
+        if key in ('w', 'up'):
+            row -= 1
+
+        elif key in ('s', 'down'):
+            if row + 1 < NUM_ROWS:
+                row += 1
+            else:
+                row = 0
+
+        elif key in ('a', 'left'):
+            col -= 1
+
+        elif key in ('d', 'right'):
+            if col + 1 < NUM_COLUMNS:
+                # move the boat down one row
+                col += 1
+                # If that would push them off the board
+                # instead put the boat to the first row
+            else:
+                col = 0
+        else:
+            if key == 'e':
+                new_board(boat_coords = (row, col))
+                number_of_fish -= 2
+            value_of_moved_to_square = ' '
+
+        value_of_moved_to_square, board[row][col] = board[row][col], 'b'
+
+        if value_of_moved_to_square == 'f':
+            number_of_fish += randint(1, 3)
+        elif value_of_moved_to_square == 's':
+            number_of_fish -= randint(1, 3)
+            add_tile('s', 1)
+            # every time the player moves if it is there 2nd turn subtract a fish
+            # (uses variable to generalise to fish loss on nth turn)
+        os.system("cls" if os.name == "nt" else "clear")
+        pretty_print_board()
+    else:
+        pass
+    last_press = time()
