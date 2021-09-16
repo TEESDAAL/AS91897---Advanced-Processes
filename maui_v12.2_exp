@@ -10,7 +10,7 @@ except ModuleNotFoundError:
           pip install keyboard""")
 
 FISH_TILE = """\
- _______________‎ ‎
+ _______________ ‎
 |               |
 |   <><   <><   |
 |     <><       |
@@ -77,6 +77,7 @@ Y *= random.choice((-1, 1))
 
 def pretty_print_board():
     """Takes a board from an array of letters and prints a grid of tiles"""
+    os.system("cls" if os.name == "nt" else "clear")
     print(f"You have {number_of_fish} fish left." if number_of_fish > 0
           else "You starved to death.")
     print(X, Y, col, row)
@@ -183,24 +184,23 @@ Rules:
 
 """
 
-os.system("cls" if os.name == "nt" else "clear")
+
 print(RULES)
 input("Press Enter to Start the game")
 os.system("cls" if os.name == "nt" else "clear")
 
-
-print(f"""
-To the {CARDINAL_DIRECTION} lies the heart of the sea,
+print(f"""To the {CARDINAL_DIRECTION} lies the heart of the sea,
 there you must find Hui Te Ananui-a-Tangaroa, The Home of Tangaroa.
 You will cross treacherous seas and learn the legend of Te Ika-a-Maui.""")
 input("Press enter to continue")
 
 
 os.system("cls" if os.name == "nt" else "clear")
+
 # Create the board and then print it.
 new_board()
 
-last_press = time()
+
 keyboard.on_press(move)
 VALID_KEYS = ('w', 'up', 'a', 'left', 's', 'down', 'd', 'right', 'h')
 
@@ -281,4 +281,3 @@ while number_of_fish > 0:
 
     else:
         pass
-    last_press = time()
