@@ -1,0 +1,284 @@
+import random
+from time import time, sleep
+import os
+
+try:
+    import keyboard
+except ModuleNotFoundError:
+    print("Please import the keyboard module")
+    input("""Please use the following command in the terminal:
+          pip install keyboard""")
+
+FISH_TILE = """\
+ _______________‎ ‎
+|               |
+|   <><   <><   |
+|     <><       |
+|  <><    <><   |
+|      <><      |
+|               |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+STORM_TILE = """\
+ _______________ ‎
+| (_ , /\\  ,_/  |
+|   --\\ `\\--`   |
+|      _\\ _\\    |
+|       `\\_\\    |
+|       `\\\     |
+|         \\     |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+
+BOAT_TILE = """\
+ _______________ ‎
+|      v  ~.    |
+|         /|    |
+|        / |    |
+| v     /__|__  |
+|     \--------/|
+|~~~`~~~~~~'~~~~|
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+NORTH_ISLAND = """\
+ _______________ ‎
+|   ~    %   ~  |
+| ~    ~   %% % |
+|  ~   ~   %%%  |
+|    ~  %%%   ~ |
+| ~   %%%%  ~   |
+|   %%%%  ~   ~ |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+BLANK_TILE = """\
+ _______________ ‎
+|  ~      ~     |
+|      ~    ~   |
+|   ~     ~     |
+|      ~     ~  |
+|   ~     ~     |
+| ~    ~     ~  |
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ """.splitlines()
+
+
+NUM_COLS = NUM_ROWS = 5
+TURNS_TILL_FISH_LOSS = 2
+CARDINAL_DIRECTION = random.choice(("North", "South", "East", "West"))
+number_of_fish = 100
+number_moves = 0
+row, col = 0, 0
+
+RADIUS_OF_CIRCLE = random.randint(25, 35)
+X = random.randint(0, RADIUS_OF_CIRCLE)
+Y = RADIUS_OF_CIRCLE - X
+X *= random.choice((-1, 1))
+Y *= random.choice((-1, 1))
+
+
+def pretty_print_board():
+    """Takes a board from an array of letters and prints a grid of tiles"""
+    print(f"You have {number_of_fish} fish left." if number_of_fish > 0
+          else "You starved to death.")
+    print(X, Y, col, row)
+    for test in board:
+        # combine each line in the ascii tiles together into tuples
+        # Then print the upacked version of each line to prettify them
+        for pretty_row in zip(*[FISH_TILE if tile == 'f' else
+                                STORM_TILE if tile == 's' else
+                                BOAT_TILE if tile == 'b' else
+                                NORTH_ISLAND if tile == 'n' else
+                                BLANK_TILE for tile in test]):
+            print(*pretty_row)
+
+
+def add_tile(tile_type, number_to_place):
+    """Adds the specified tile to the map in a location that is blank
+
+    Args:
+        tile_type (string): The type of tile to add
+        number_to_place (int): The number of tiles to add to the board
+    """
+    # Put fish tiles on the board
+    type_left_to_place = number_to_place
+
+    while type_left_to_place:
+        # Get random square
+        selected_row = random.randint(0, NUM_ROWS - 1)
+        selected_column = random.randint(0, NUM_COLS - 1)
+
+        if board[selected_row][selected_column] == ' ':
+            board[selected_row][selected_column] = tile_type
+            type_left_to_place -= 1
+
+
+def get_coords():
+    for row_index, row in enumerate(board):
+        for col_index, tile in enumerate(row):
+            if tile == 'b':
+                return row_index, col_index
+
+
+def new_board(n_fish=3, n_storms=10, add_island=False, boat_coords=(0, 0)):
+    """Create a new random board with the boat at the boat_coords if inputed"""
+    global board
+    # Replace the board with a blank one
+    board = [[' ' for col in range(NUM_COLS)] for row in range(NUM_ROWS)]
+
+    row, col = boat_coords
+    board[row][col] = 'b'
+
+    # Add the North Island to the board if the user is close enough.
+    add_tile('n', add_island)
+
+    # Add fish to the board
+    add_tile('f', n_fish)
+
+    # Add storms to the board
+    add_tile('s', n_storms)
+
+    os.system("cls" if os.name == "nt" else "clear")
+    pretty_print_board()
+
+
+def move(key_press):
+    """Record the users keypresses."""
+    global key
+    key = str(key_press)[14:-6].lower()
+
+
+# Print Rules
+RULES = """\
+            ___---*** Maui's Adventure ***---___
+
+In this game you play as Maui moving around the ocean
+trying to ward of starvation.
+
+Rules:
+    - Keys:
+        - Type one of W, A, S, or D or the arrow keys to move the boat
+        - W/↑: Move the player up one tile.
+        - A/←: Move the player one tile to the left.
+        - S/↓: Move the player down on tile.
+        - D/→: Move the player one to the right.
+
+        - E: Pressing 'E' ends the day (costing you 2 fish)
+             and refreshes the board.
+        - H: Prints the game rules
+
+    You start with 10 fish, every second move you lose 1 fish,
+    if you reach 0 fish you lose/starve to death.
+
+    If you try to move off the board you will warp to the opposite
+    side of the board.
+
+    - Tiles:
+        - Boat: The "Boat Tile" reflects the position of the player.
+
+        - Fish: Moving onto a "Fish Tile" gains you 1-3 fish.
+
+        - Storm: Moving onto a "Storm Tile" costs you 1-3 fish.
+
+        - Blank: Moving onto a "Blank Tile" has no effect.
+
+
+"""
+
+os.system("cls" if os.name == "nt" else "clear")
+print(RULES)
+input("Press Enter to Start the game")
+os.system("cls" if os.name == "nt" else "clear")
+
+
+print(f"""
+To the {CARDINAL_DIRECTION} lies the heart of the sea,
+there you must find Hui Te Ananui-a-Tangaroa, The Home of Tangaroa.
+You will cross treacherous seas and learn the legend of Te Ika-a-Maui.""")
+input("Press enter to continue")
+
+
+os.system("cls" if os.name == "nt" else "clear")
+# Create the board and then print it.
+new_board()
+
+last_press = time()
+keyboard.on_press(move)
+VALID_KEYS = ('w', 'up', 'a', 'left', 's', 'down', 'd', 'right', 'h')
+
+board_row = board_col = old_row = old_col = 0
+
+while number_of_fish > 0:
+    # Reset the key that was pressed
+    key = None
+    sleep(0.01)
+
+    if key in VALID_KEYS:
+
+        # Move but up or down
+        if key in ('w', 'up'):
+            row -= 1
+
+        elif key in ('s', 'down'):
+            row += 1
+
+        elif key in ('a', 'left'):
+            col -= 1
+
+        elif key in ('d', 'right'):
+            col += 1
+
+        if key == 'h':
+            print(RULES)
+            input()
+        else:
+            os.system("cls" if os.name == "nt" else "clear")
+
+            if number_moves % TURNS_TILL_FISH_LOSS:
+                number_of_fish -= 1
+
+            number_moves += 1
+
+            # Remove the boat tile
+            board[board_row][board_col] = ' '
+
+            # Record the Prevoius position
+            old_row, old_col = board_row, board_col
+
+            # Get the pos on the board
+            board_row, board_col = row % (NUM_ROWS), col % (NUM_COLS)
+            # Record the value of the moved to square
+            value_of_moved_to_square = board[board_row][board_col]
+            print(value_of_moved_to_square)
+
+            # Place the boat at new coords
+            board[board_row][board_col] = 'b'
+
+            # If the user moves of the board refresh it
+            # And put them at the right location
+            if any((board_row == NUM_ROWS - 1 and old_row == 0,
+                    old_row == NUM_ROWS - 1 and board_row == 0,
+                    board_col == NUM_COLS - 1 and old_col == 0,
+                    old_col == NUM_COLS - 1 and board_col == 0)):
+
+                found_island = all((Y - 5 < row < Y + 5,
+                                    X - 5 < col < X + 5))
+                new_board(boat_coords=(board_row, board_col),
+                          add_island=found_island)
+
+            else:
+                if value_of_moved_to_square == 'f':
+                    number_of_fish += random.randint(1, 3)
+
+                elif value_of_moved_to_square == 's':
+                    number_of_fish -= random.randint(1, 3)
+                    add_tile('s', 1)
+
+                elif value_of_moved_to_square == 'n':
+                    os.system("cls" if os.name == "nt" else "clear")
+                    print("You Won!!")
+                    break
+
+                pretty_print_board()
+
+    else:
+        pass
+    last_press = time()
