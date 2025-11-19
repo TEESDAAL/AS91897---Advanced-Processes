@@ -18,6 +18,7 @@ Problems/Solutions:
 
 TILES:
 Boat Tile:
+```
  _______________
 |    v   ~.     |
 |        /|     |
@@ -25,10 +26,12 @@ Boat Tile:
 | v   _/__|___  |
 |    \--------/ |
 |~~~`~~~~~~'~~~~|
- ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ 
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+```
 This Tile represents the player and is located at the centre of the board.
  
 Te Ika-a-Māui/Aotearoa/New Zealand:
+```
  _______________ 
 |   ~    %   ~  |
 | ~    ~   %% % |
@@ -36,10 +39,12 @@ Te Ika-a-Māui/Aotearoa/New Zealand:
 |    ~  %%%   ~ |
 | ~   %%%%  ~   |
 |   %%%%  ~   ~ |
- ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ 
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+```
 Moving onto this tile wins the game.
 
 Blank Tile:
+```
  _______________ 
 |  ~      ~     |
 |      ~    ~   |
@@ -47,10 +52,12 @@ Blank Tile:
 |      ~     ~  |
 |   ~     ~     |
 | ~    ~     ~  |
- ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ 
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+```
 Moving onto a blank tile has no effect.
 
 Fish Tile:
+```
  _______________ 
 |               |
 |   <><   <><   |
@@ -58,10 +65,12 @@ Fish Tile:
 |  <><    <><   |
 |      <><      |
 |               |
- ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ 
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+```
  When the boat moves onto this tile you gain 1-3 fish, and the school of fish move to another blank tile.
  
  Storm Tile
+ ```
  _______________ 
 | (_ , /\  ,_/  |
 |   --\ `\--`   |
@@ -69,7 +78,8 @@ Fish Tile:
 |       `\_\    |
 |       `\\     |
 |         \     |
- ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾ 
+ ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
+```
  When the boat moves onto this tile you lose 1-3 fish, and the storm is blown to another blank tile.
  
  
